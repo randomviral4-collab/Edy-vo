@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Edy VO – Ubah teks jadi suara, gratis</title>
-<meta name="description" content="Pengisi suara AI gratis yang berjalan langsung di browser. Tanpa akun, tanpa batas karakter.">
+<meta name="description" content="Pengisi suara AI gratis: kualitas tinggi lewat Gemini, cadangan otomatis yang berjalan di browser. Tanpa akun.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
@@ -21,14 +21,15 @@ header{display:flex;align-items:center;gap:10px;padding:18px 0 8px;font-weight:8
 h1{font-size:clamp(34px,9vw,56px);line-height:1.05;font-weight:800;margin:28px 0 14px;letter-spacing:-.02em}
 .lead{color:var(--muted);max-width:46ch;margin:0 0 26px}
 .wave{display:flex;align-items:center;gap:4px;height:64px;margin:0 0 22px}
-.wave i{flex:1;max-width:8px;border-radius:4px;background:var(--amber);height:var(--h);opacity:.9;transform-origin:center}
+.wave i{flex:1;max-width:8px;border-radius:4px;background:var(--amber);height:var(--h);opacity:.9}
 .wave.on i{animation:pulse .9s ease-in-out infinite;animation-delay:calc(var(--n)*-70ms)}
 @keyframes pulse{50%{transform:scaleY(.35)}}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px}
 label{display:block;font-weight:600;font-size:14px;margin:0 0 6px}
-textarea,select{width:100%;background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:12px;font:inherit}
+textarea,select,input[type=password]{width:100%;background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:12px;font:inherit}
 textarea{min-height:150px;resize:vertical}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
+.cnt{text-align:right;color:var(--muted);font-size:13px;margin:4px 0 0}
 input[type=range]{width:100%;accent-color:var(--amber)}
 button{font:inherit;font-weight:800;border:0;border-radius:12px;padding:14px 18px;cursor:pointer;width:100%}
 #go{background:var(--amber);color:var(--ink)}
@@ -38,6 +39,12 @@ audio{width:100%;margin-top:14px;display:none}
 #status{min-height:22px;margin:12px 0 0;color:var(--muted);font-size:14px}
 #bar{height:4px;background:var(--line);border-radius:2px;margin-top:8px;overflow:hidden;display:none}
 #bar b{display:block;height:100%;width:0;background:var(--amber)}
+[hidden]{display:none!important}
+details{margin-top:16px;border-top:1px solid var(--line);padding-top:12px}
+summary{cursor:pointer;font-weight:600}
+.hint{color:var(--muted);font-size:13px;margin:8px 0 0}
+.keyrow{display:grid;grid-template-columns:1fr auto auto;gap:8px;margin-top:10px}
+.keyrow button{width:auto;padding:12px 14px;background:var(--bg);color:var(--text);border:1px solid var(--line)}
 :focus-visible{outline:3px solid var(--amber);outline-offset:2px}
 h2{font-size:22px;margin:40px 0 10px}
 ul{padding-left:20px;color:var(--muted)}li{margin:6px 0}
@@ -50,27 +57,38 @@ footer{margin-top:40px;color:var(--muted);font-size:13px}
 <header><span class="dot"></span>Edy VO</header>
 
 <h1>Ketik teks, dengar suaranya dalam hitungan detik.</h1>
-<p class="lead">Pengisi suara AI gratis yang berjalan langsung di browser kamu. Tanpa akun, tanpa batas karakter, teksmu tidak dikirim ke server mana pun.</p>
+<p class="lead">Pengisi suara AI gratis, tanpa akun. Mode kualitas tinggi mendukung bahasa Indonesia, dan cadangan otomatis berjalan langsung di browser kamu.</p>
 
 <div class="wave" id="wave" aria-hidden="true"></div>
 
 <section class="card" aria-label="Pembuat suara">
   <label for="text">Teks</label>
-  <textarea id="text" placeholder="Tulis atau tempel teks bahasa Inggris di sini…">Welcome to Edy VO. Type any text, pick a voice, and hear it spoken in seconds.</textarea>
+  <textarea id="text" maxlength="1000" placeholder="Tulis atau tempel teks di sini…">Halo, selamat datang di Edy VO. Ketik teks apa saja, pilih suara, lalu dengarkan hasilnya.</textarea>
+  <p class="cnt"><span id="n">0</span> / 1000 karakter</p>
   <div class="row">
     <div>
-      <label for="voice">Suara</label>
-      <select id="voice">
-        <option value="af_heart">Heart (perempuan, AS)</option>
-        <option value="af_bella">Bella (perempuan, AS)</option>
-        <option value="af_nicole">Nicole (perempuan, AS)</option>
-        <option value="am_michael">Michael (laki-laki, AS)</option>
-        <option value="am_fenrir">Fenrir (laki-laki, AS)</option>
-        <option value="bf_emma">Emma (perempuan, Inggris)</option>
-        <option value="bm_george">George (laki-laki, Inggris)</option>
+      <label for="mode">Mode</label>
+      <select id="mode">
+        <option value="hq">Kualitas tinggi (Gemini)</option>
+        <option value="std">Standar (di browser, Inggris)</option>
       </select>
     </div>
     <div>
+      <label for="voice">Suara</label>
+      <select id="voice"></select>
+    </div>
+  </div>
+  <div class="row">
+    <div id="styleBox">
+      <label for="style">Gaya bicara</label>
+      <select id="style">
+        <option value="normal">Normal</option>
+        <option value="hangat">Hangat</option>
+        <option value="semangat">Semangat</option>
+        <option value="tenang">Tenang</option>
+      </select>
+    </div>
+    <div id="speedBox" hidden>
       <label for="speed">Kecepatan <span id="sv">1.0x</span></label>
       <input id="speed" type="range" min="0.7" max="1.3" step="0.1" value="1">
     </div>
@@ -80,21 +98,35 @@ footer{margin-top:40px;color:var(--muted);font-size:13px}
   <p id="status" role="status"></p>
   <audio id="player" controls></audio>
   <a class="dl" id="dl" download="edy-vo.wav">Unduh audio (.wav)</a>
+  <details id="keybox">
+    <summary>Pengaturan API key Gemini</summary>
+    <p class="hint">Kunci disimpan hanya di browser ini dan dikirim ke server saat membuat suara. Ganti kapan saja kalau kredit habis.</p>
+    <div class="keyrow">
+      <input id="key" type="password" autocomplete="off" placeholder="Tempel API key (AIza…)" aria-label="API key Gemini">
+      <button id="saveKey" type="button">Simpan</button>
+      <button id="delKey" type="button">Hapus</button>
+    </div>
+    <p id="keyState" class="hint"></p>
+  </details>
 </section>
 
 <h2>Cara kerjanya</h2>
 <ul>
-  <li>Model suara (Kokoro, sekitar 90 MB) diunduh sekali, lalu tersimpan di browser.</li>
-  <li>Semua proses terjadi di perangkatmu, jadi gratis dan privat.</li>
-  <li>Saat ini suara terbaik untuk teks bahasa Inggris.</li>
+  <li>Mode kualitas tinggi memakai API key Gemini milikmu sendiri, disimpan hanya di browser ini dan bisa diganti kapan saja.</li>
+  <li>Kalau jatah gratis habis, halaman otomatis pindah ke mode standar (Kokoro) yang berjalan di perangkatmu.</li>
+  <li>Mode standar paling bagus untuk teks bahasa Inggris dan mengunduh model sekitar 90 MB sekali saja.</li>
 </ul>
-<footer>Dibuat dengan Kokoro-82M. Edy VO.</footer>
+<footer>Edy VO. Gemini TTS dan Kokoro-82M.</footer>
 </main>
 
 <script type="module">
 import { KokoroTTS } from "https://cdn.jsdelivr.net/npm/kokoro-js@1.2.1/+esm";
 
 const $ = id => document.getElementById(id);
+const VOICES = {
+  hq: [["Kore","Kore (tegas)"],["Zephyr","Zephyr (cerah)"],["Puck","Puck (ceria)"],["Charon","Charon (informatif)"],["Aoede","Aoede (santai)"],["Leda","Leda (muda)"],["Orus","Orus (mantap)"],["Fenrir","Fenrir (bersemangat)"]],
+  std: [["af_heart","Heart (AS)"],["af_bella","Bella (AS)"],["af_nicole","Nicole (AS)"],["am_michael","Michael (AS)"],["am_fenrir","Fenrir (AS)"],["bf_emma","Emma (Inggris)"],["bm_george","George (Inggris)"]]
+};
 const wave = $("wave");
 for (let i = 0; i < 40; i++) {
   const b = document.createElement("i");
@@ -102,15 +134,26 @@ for (let i = 0; i < 40; i++) {
   b.style.setProperty("--n", i);
   wave.appendChild(b);
 }
-$("speed").addEventListener("input", e => $("sv").textContent = Number(e.target.value).toFixed(1) + "x");
 
+function fillVoices() {
+  const m = $("mode").value;
+  $("voice").innerHTML = VOICES[m].map(v => '<option value="' + v[0] + '">' + v[1] + "</option>").join("");
+  $("styleBox").hidden = m !== "hq";
+  $("speedBox").hidden = m !== "std";
+}
+$("mode").addEventListener("change", fillVoices);
+fillVoices();
+$("speed").addEventListener("input", e => $("sv").textContent = Number(e.target.value).toFixed(1) + "x");
+$("text").addEventListener("input", () => $("n").textContent = $("text").value.length);
+$("n").textContent = $("text").value.length;
+
+/* ---------- Mode standar: Kokoro di browser ---------- */
 let tts = null;
 async function loadModel() {
   if (tts) return tts;
   $("bar").style.display = "block";
   tts = await KokoroTTS.from_pretrained("onnx-community/Kokoro-82M-v1.0-ONNX", {
-    dtype: "q8",
-    device: "wasm",
+    dtype: "q8", device: "wasm",
     progress_callback: p => {
       if (p.status === "progress" && typeof p.progress === "number") {
         $("bar").firstElementChild.style.width = p.progress + "%";
@@ -121,7 +164,6 @@ async function loadModel() {
   $("bar").style.display = "none";
   return tts;
 }
-
 function chunk(text) {
   const parts = text.replace(/\s+/g, " ").trim().split(/(?<=[.!?])\s+/);
   const out = []; let cur = "";
@@ -132,7 +174,6 @@ function chunk(text) {
   if (cur) out.push(cur);
   return out;
 }
-
 function toWav(samples, rate) {
   const buf = new ArrayBuffer(44 + samples.length * 2), v = new DataView(buf);
   const w = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
@@ -146,33 +187,92 @@ function toWav(samples, rate) {
   }
   return new Blob([buf], { type: "audio/wav" });
 }
+async function viaKokoro(text, voice, speed) {
+  const model = await loadModel();
+  const parts = chunk(text), clips = []; let total = 0, rate = 24000;
+  for (let i = 0; i < parts.length; i++) {
+    $("status").textContent = "Membuat suara… bagian " + (i + 1) + " dari " + parts.length;
+    const a = await model.generate(parts[i], { voice, speed });
+    clips.push(a.audio); total += a.audio.length; rate = a.sampling_rate;
+  }
+  const all = new Float32Array(total); let o = 0;
+  for (const c of clips) { all.set(c, o); o += c.length; }
+  return toWav(all, rate);
+}
 
+/* ---------- Mode kualitas tinggi: Gemini lewat /api/tts ---------- */
+const KEY_NAME = "edyvo_gemini_key";
+function getKey() { try { return localStorage.getItem(KEY_NAME) || ""; } catch (e) { return ""; } }
+function setKey(k) { try { if (k) localStorage.setItem(KEY_NAME, k); else localStorage.removeItem(KEY_NAME); } catch (e) {} }
+function keyLabel() {
+  const k = getKey();
+  $("keyState").textContent = k ? "Kunci tersimpan (berakhiran …" + k.slice(-4) + ")." : "Belum ada kunci tersimpan.";
+}
+$("saveKey").addEventListener("click", () => {
+  const k = $("key").value.trim();
+  if (k.length < 20 || /\s/.test(k)) { $("keyState").textContent = "Format kunci tampak salah. Salin ulang dari AI Studio."; return; }
+  setKey(k); $("key").value = ""; keyLabel();
+});
+$("delKey").addEventListener("click", () => { setKey(""); $("key").value = ""; keyLabel(); });
+keyLabel();
+
+async function viaGemini(text, voice, style) {
+  const r = await fetch("/api/tts", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "x-gemini-key": getKey() },
+    body: JSON.stringify({ text, voice, style })
+  });
+  if (!r.ok) {
+    let msg = "Gagal membuat suara";
+    try { msg = (await r.json()).error || msg; } catch (e) {}
+    const err = new Error(msg); err.status = r.status; throw err;
+  }
+  return await r.blob();
+}
+
+/* ---------- Tombol utama ---------- */
+const cache = new Map();
+function show(blob, note) {
+  const url = URL.createObjectURL(blob);
+  $("player").src = url; $("player").style.display = "block"; $("player").play().catch(() => {});
+  $("dl").href = url; $("dl").style.display = "block";
+  $("status").textContent = note;
+}
 $("go").addEventListener("click", async () => {
   const text = $("text").value.trim();
   if (!text) { $("status").textContent = "Isi teks dulu, lalu tekan Buat suara."; return; }
-  const btn = $("go");
-  btn.disabled = true;
-  wave.classList.add("on");
+  const mode = $("mode").value, voice = $("voice").value, style = $("style").value, speed = Number($("speed").value);
+  const key = [mode, voice, style, speed, text].join("|");
+  if (cache.has(key)) { show(cache.get(key), "Selesai (dari cache, tidak memakai kuota)."); return; }
+  if (mode === "hq" && !getKey()) {
+    $("keybox").open = true;
+    $("status").textContent = "Isi API key Gemini dulu di Pengaturan di bawah (gratis dari Google AI Studio), atau pilih mode Standar.";
+    return;
+  }
+  $("go").disabled = true; wave.classList.add("on");
   try {
-    const model = await loadModel();
-    const parts = chunk(text), clips = []; let total = 0, rate = 24000;
-    for (let i = 0; i < parts.length; i++) {
-      $("status").textContent = "Membuat suara… bagian " + (i + 1) + " dari " + parts.length;
-      const a = await model.generate(parts[i], { voice: $("voice").value, speed: Number($("speed").value) });
-      clips.push(a.audio); total += a.audio.length; rate = a.sampling_rate;
+    let blob, note = "Selesai. Putar atau unduh hasilnya.";
+    if (mode === "hq") {
+      try {
+        $("status").textContent = "Membuat suara kualitas tinggi…";
+        blob = await viaGemini(text, voice, style);
+      } catch (e) {
+        if (e.status === 401) { $("keybox").open = true; throw e; }
+        if (e.status === 429) $("keybox").open = true;
+        $("status").textContent = e.message + ". Beralih ke mode standar (paling cocok untuk bahasa Inggris)…";
+        blob = await viaKokoro(text, "af_heart", 1);
+        note = "Selesai dengan mode standar karena: " + e.message + ".";
+      }
+    } else {
+      blob = await viaKokoro(text, voice, speed);
     }
-    const all = new Float32Array(total); let o = 0;
-    for (const c of clips) { all.set(c, o); o += c.length; }
-    const url = URL.createObjectURL(toWav(all, rate));
-    $("player").src = url; $("player").style.display = "block"; $("player").play().catch(() => {});
-    $("dl").href = url; $("dl").style.display = "block";
-    $("status").textContent = "Selesai. Putar atau unduh hasilnya.";
+    cache.set(key, blob);
+    show(blob, note);
   } catch (err) {
     console.error(err);
-    $("status").textContent = "Gagal membuat suara. Muat ulang halaman dan coba lagi dengan teks yang lebih pendek.";
+    $("status").textContent = err.status === 401 ? err.message + "." : "Gagal membuat suara. Muat ulang halaman dan coba teks yang lebih pendek.";
   } finally {
-    btn.disabled = false;
-    wave.classList.remove("on");
+    $("go").disabled = false; wave.classList.remove("on");
   }
 });
 </script>
