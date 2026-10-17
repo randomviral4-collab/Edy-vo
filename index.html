@@ -107,6 +107,7 @@ footer{margin-top:40px;color:var(--muted);font-size:13px}
       <button id="delKey" type="button">Hapus</button>
     </div>
     <p id="keyState" class="hint"></p>
+    <p class="hint"><a href="https://ai.dev/usage?tab=rate-limit" target="_blank" rel="noopener" style="color:var(--amber)">Cek sisa limit di Google AI Studio</a>. Limit berlaku per proyek Google, dan jatah gratis diperbarui berkala, bukan berupa saldo kredit.</p>
   </details>
 </section>
 
@@ -124,8 +125,20 @@ import { KokoroTTS } from "https://cdn.jsdelivr.net/npm/kokoro-js@1.2.1/+esm";
 
 const $ = id => document.getElementById(id);
 const VOICES = {
-  hq: [["Kore","Kore (tegas)"],["Zephyr","Zephyr (cerah)"],["Puck","Puck (ceria)"],["Charon","Charon (informatif)"],["Aoede","Aoede (santai)"],["Leda","Leda (muda)"],["Orus","Orus (mantap)"],["Fenrir","Fenrir (bersemangat)"]],
-  std: [["af_heart","Heart (AS)"],["af_bella","Bella (AS)"],["af_nicole","Nicole (AS)"],["am_michael","Michael (AS)"],["am_fenrir","Fenrir (AS)"],["bf_emma","Emma (Inggris)"],["bm_george","George (Inggris)"]]
+  hq: [
+    ["Kore","Kore (wanita, tegas)","wanita"],["Zephyr","Zephyr (wanita, cerah)","wanita"],["Leda","Leda (wanita, muda)","wanita"],
+    ["Aoede","Aoede (wanita, santai)","wanita"],["Callirrhoe","Callirrhoe (wanita, kalem)","wanita"],["Autonoe","Autonoe (wanita, cerah)","wanita"],
+    ["Despina","Despina (wanita, halus)","wanita"],["Erinome","Erinome (wanita, jernih)","wanita"],["Laomedeia","Laomedeia (wanita, ceria)","wanita"],
+    ["Achernar","Achernar (wanita, lembut)","wanita"],["Gacrux","Gacrux (wanita, dewasa)","wanita"],["Pulcherrima","Pulcherrima (wanita, lugas)","wanita"],
+    ["Vindemiatrix","Vindemiatrix (wanita, lembut)","wanita"],["Sulafat","Sulafat (wanita, hangat)","wanita"],
+    ["Puck","Puck (pria, ceria)","pria"],["Charon","Charon (pria, informatif)","pria"],["Fenrir","Fenrir (pria, bersemangat)","pria"],
+    ["Orus","Orus (pria, tegas)","pria"],["Enceladus","Enceladus (pria, berdesah)","pria"],["Iapetus","Iapetus (pria, jernih)","pria"],
+    ["Umbriel","Umbriel (pria, santai)","pria"],["Algenib","Algenib (pria, serak)","pria"],["Algieba","Algieba (pria, halus)","pria"],
+    ["Schedar","Schedar (pria, stabil)","pria"],["Achird","Achird (pria, ramah)","pria"],["Zubenelgenubi","Zubenelgenubi (pria, kasual)","pria"],
+    ["Sadachbia","Sadachbia (pria, lincah)","pria"],["Sadaltager","Sadaltager (pria, berpengetahuan)","pria"],
+    ["Alnilam","Alnilam (pria, tegas)","pria"],["Rasalgethi","Rasalgethi (pria, informatif)","pria"]
+  ],
+  std: [["af_heart","Heart (wanita, AS)"],["af_bella","Bella (wanita, AS)"],["af_nicole","Nicole (wanita, AS)"],["bf_emma","Emma (wanita, Inggris)"],["am_michael","Michael (pria, AS)"],["am_fenrir","Fenrir (pria, AS)"],["bm_george","George (pria, Inggris)"]]
 };
 const wave = $("wave");
 for (let i = 0; i < 40; i++) {
@@ -137,7 +150,11 @@ for (let i = 0; i < 40; i++) {
 
 function fillVoices() {
   const m = $("mode").value;
-  $("voice").innerHTML = VOICES[m].map(v => '<option value="' + v[0] + '">' + v[1] + "</option>").join("");
+  const opt = v => '<option value="' + v[0] + '">' + v[1] + "</option>";
+  const L = VOICES[m];
+  $("voice").innerHTML = m === "hq"
+    ? ["wanita", "pria"].map(g => '<optgroup label="' + (g === "wanita" ? "Wanita" : "Pria") + '">' + L.filter(v => v[2] === g).map(opt).join("") + "</optgroup>").join("")
+    : L.map(opt).join("");
   $("styleBox").hidden = m !== "hq";
   $("speedBox").hidden = m !== "std";
 }
