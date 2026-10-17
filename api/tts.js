@@ -2,7 +2,11 @@
 // API key dikirim dari landing page lewat header x-gemini-key (tidak disimpan di server).
 // Opsional: GEMINI_TTS_MODEL di Vercel > Settings > Environment Variables untuk mengganti model.
 const MODELS = [process.env.GEMINI_TTS_MODEL, "gemini-3.1-flash-tts-preview", "gemini-2.5-flash-preview-tts"].filter(Boolean);
-const VOICES = ["Zephyr", "Puck", "Charon", "Kore", "Fenrir", "Leda", "Orus", "Aoede"];
+const VOICES = [
+  "Zephyr", "Puck", "Charon", "Kore", "Fenrir", "Leda", "Orus", "Aoede", "Callirrhoe", "Autonoe",
+  "Enceladus", "Iapetus", "Umbriel", "Algieba", "Despina", "Erinome", "Algenib", "Rasalgethi", "Laomedeia", "Achernar",
+  "Alnilam", "Schedar", "Gacrux", "Pulcherrima", "Achird", "Zubenelgenubi", "Vindemiatrix", "Sadachbia", "Sadaltager", "Sulafat"
+];
 const STYLES = {
   normal: "",
   hangat: "Say in a warm, friendly tone: ",
